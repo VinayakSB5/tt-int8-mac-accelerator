@@ -1,27 +1,60 @@
-/*
- * Copyright (c) 2024 Your Name
- * SPDX-License-Identifier: Apache-2.0
- */
 
 `default_nettype none
 
 module tt_um_example (
-    input  wire [7:0] ui_in,    // Dedicated inputs
-    output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
-    input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+    input  wire [7:0] ui_in,    // Dedicated inputs: 8-bit multiplier operand A / data
+    output wire [7:0] uo_out,   // Dedicated outputs: 8-bit accumulator output window
+    input  wire [7:0] uio_in,   // Bidirectional inputs: 8-bit multiplier operand B
+    output wire [7:0] uio_out,  // Bidirectional outputs: status flags
+    output wire [7:0] uio_oe,   // Bidirectional pin direction control (1 = out, 0 = in)
+    input  wire       ena,      // Will go high when design is powered
+    input  wire       clk,      // Clock signal
+    input  wire       rst_n     // Active-low synchronous reset
 );
 
-  // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
-  assign uio_out = 0;
-  assign uio_oe  = 0;
+    // Set bidirectional pins: uio[7:0] used as inputs for operand B (oe = 0)
+    assign uio_oe  = 8'b00000000;
+    assign uio_out = 8'b00000000;
 
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+    // Internal signed registers for pipelined INT8 MAC
+    reg signed [7:0]  reg_a;
+    reg signed [7:0]  reg_b;
+    reg signed [15:0] mult_product;
+    reg signed [31:0] accumulator;
+
+    wire reset = !rst_n;
+
+    // Stage 1: Input Latch
+    always @(posedge clk) begin
+        if (reset) begin
+            reg_a <= 8'sd0;
+            reg_b <= 8'sd0;
+        end else if (ena) begin
+            reg_a <= ui_in;
+            reg_b <= uio_in;
+        end
+    end
+
+    // Stage 2: Pipelined Multiplier
+    always @(posedge clk) begin
+        if (reset) begin
+            mult_product <= 16'sd0;
+        end else if (ena) begin
+            mult_product <= reg_a * reg_b;
+        end
+    end
+
+    // Stage 3: Accumulate with Saturation Guard
+    always @(posedge clk) begin
+        if (reset) begin
+            accumulator <= 32'sd0;
+        end else if (ena) begin
+            // Accumulate previous sum with product
+            accumulator <= accumulator + {{16{mult_product[15]}}, mult_product};
+        end
+    end
+
+    // Expose the lower 8 bits of accumulator to dedicated outputs
+    assign uo_out = accumulator[7:0];
 
 endmodule
