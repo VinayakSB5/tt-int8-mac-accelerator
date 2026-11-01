@@ -1,18 +1,22 @@
+/*
+ * Copyright (c) 2026 Vinayak S Biradar
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 `default_nettype none
 
 module tt_um_example (
-    input  wire [7:0] ui_in,    // Dedicated inputs: 8-bit multiplier operand A / data
-    output wire [7:0] uo_out,   // Dedicated outputs: 8-bit accumulator output window
-    input  wire [7:0] uio_in,   // Bidirectional inputs: 8-bit multiplier operand B
-    output wire [7:0] uio_out,  // Bidirectional outputs: status flags
-    output wire [7:0] uio_oe,   // Bidirectional pin direction control (1 = out, 0 = in)
-    input  wire       ena,      // Will go high when design is powered
-    input  wire       clk,      // Clock signal
+    input  wire [7:0] ui_in,    // Dedicated inputs: Multiplier Operand A
+    output wire [7:0] uo_out,   // Dedicated outputs: Accumulator output byte
+    input  wire [7:0] uio_in,   // Bidirectional inputs: Multiplier Operand B
+    output wire [7:0] uio_out,  // Bidirectional outputs (unused)
+    output wire [7:0] uio_oe,   // Bidirectional output enables (set to 0 for inputs)
+    input  wire       ena,      // Design enable signal
+    input  wire       clk,      // Clock
     input  wire       rst_n     // Active-low synchronous reset
 );
 
-    // Set bidirectional pins: uio[7:0] used as inputs for operand B (oe = 0)
+    // Configure bidirectional pins as inputs for Operand B
     assign uio_oe  = 8'b00000000;
     assign uio_out = 8'b00000000;
 
@@ -44,17 +48,16 @@ module tt_um_example (
         end
     end
 
-    // Stage 3: Accumulate with Saturation Guard
+    // Stage 3: Accumulate with Sign-Extension
     always @(posedge clk) begin
         if (reset) begin
             accumulator <= 32'sd0;
         end else if (ena) begin
-            // Accumulate previous sum with product
             accumulator <= accumulator + {{16{mult_product[15]}}, mult_product};
         end
     end
 
-    // Expose the lower 8 bits of accumulator to dedicated outputs
+    // Expose lower 8 bits to the dedicated output pins
     assign uo_out = accumulator[7:0];
 
 endmodule
