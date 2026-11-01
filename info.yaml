@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title:        "Pipelined INT8 MAC Hardware Accelerator"
+  title:        "Pipelined INT8 MAC Accelerator"
   author:       "Vinayak S Biradar"
   discord:      ""
-  description:  "A 3-stage pipelined INT8 Multiply-Accumulate unit with 32-bit accumulation for edge AI acceleration."
+  description:  "Pipelined INT8 multiply-accumulate unit for edge AI acceleration."
   language:     "Verilog"
   clock_hz:     50000000
 
@@ -14,48 +14,39 @@ project:
     - "project.v"
 
 pinout:
-  ui[0]: "Multiplier Operand A [0]"
-  ui[1]: "Multiplier Operand A [1]"
-  ui[2]: "Multiplier Operand A [2]"
-  ui[3]: "Multiplier Operand A [3]"
-  ui[4]: "Multiplier Operand A [4]"
-  ui[5]: "Multiplier Operand A [5]"
-  ui[6]: "Multiplier Operand A [6]"
-  ui[7]: "Multiplier Operand A [7]"
+  ui[0]: "Multiplier Operand A bit 0"
+  ui[1]: "Multiplier Operand A bit 1"
+  ui[2]: "Multiplier Operand A bit 2"
+  ui[3]: "Multiplier Operand A bit 3"
+  ui[4]: "Multiplier Operand A bit 4"
+  ui[5]: "Multiplier Operand A bit 5"
+  ui[6]: "Multiplier Operand A bit 6"
+  ui[7]: "Multiplier Operand A bit 7"
 
-  uo[0]: "Accumulator Output [0]"
-  uo[1]: "Accumulator Output [1]"
-  uo[2]: "Accumulator Output [2]"
-  uo[3]: "Accumulator Output [3]"
-  uo[4]: "Accumulator Output [4]"
-  uo[5]: "Accumulator Output [5]"
-  uo[6]: "Accumulator Output [6]"
-  uo[7]: "Accumulator Output [7]"
+  uo[0]: "Accumulator Output bit 0"
+  uo[1]: "Accumulator Output bit 1"
+  uo[2]: "Accumulator Output bit 2"
+  uo[3]: "Accumulator Output bit 3"
+  uo[4]: "Accumulator Output bit 4"
+  uo[5]: "Accumulator Output bit 5"
+  uo[6]: "Accumulator Output bit 6"
+  uo[7]: "Accumulator Output bit 7"
 
-  uio[0]: "Multiplier Operand B [0]"
-  uio[1]: "Multiplier Operand B [1]"
-  uio[2]: "Multiplier Operand B [2]"
-  uio[3]: "Multiplier Operand B [3]"
-  uio[4]: "Multiplier Operand B [4]"
-  uio[5]: "Multiplier Operand B [5]"
-  uio[6]: "Multiplier Operand B [6]"
-  uio[7]: "Multiplier Operand B [7]"
+  uio[0]: "Multiplier Operand B bit 0"
+  uio[1]: "Multiplier Operand B bit 1"
+  uio[2]: "Multiplier Operand B bit 2"
+  uio[3]: "Multiplier Operand B bit 3"
+  uio[4]: "Multiplier Operand B bit 4"
+  uio[5]: "Multiplier Operand B bit 5"
+  uio[6]: "Multiplier Operand B bit 6"
+  uio[7]: "Multiplier Operand B bit 7"
 
 documentation:
   author:       "Vinayak S Biradar"
-  title:        "Pipelined INT8 MAC Hardware Accelerator"
+  title:        "Pipelined INT8 MAC Accelerator"
   language:     "Verilog"
   description:  "Pipelined signed INT8 multiply-accumulate unit with internal 32-bit accumulator."
-
-  how_it_works: >
-    Stage 1 registers the 8-bit inputs operand A (ui_in) and operand B (uio_in).
-    Stage 2 computes the signed 16-bit product. Stage 3 sign-extends the product
-    to 32 bits and accumulates it into an internal register, exposing the lower byte to uo_out.
-
-  how_to_test: >
-    Apply clk pulses with rst_n high and ena high. Feed signed 8-bit values to ui_in
-    and uio_in. The accumulated result appears at uo_out after the 3-cycle pipeline latency.
-
-  external_hw:  "None required. Direct clock and pin toggling."
-
+  how_it_works: "Registers 8-bit inputs, calculates 16-bit signed product in stage 2, and accumulates in stage 3."
+  how_to_test:  "Feed signed 8-bit values to ui_in and uio_in on clock cycles with rst_n high and ena high."
+  external_hw:  "None"
   doc_version:  "1.0"
