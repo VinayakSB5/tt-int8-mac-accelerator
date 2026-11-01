@@ -1,56 +1,70 @@
 # Tiny Tapeout project information
 project:
-  title:        ""      # Project title
-  author:       ""      # Your name
-  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  ""      # One line description of what your project does
-  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  title:        "Pipelined INT8 MAC Hardware Accelerator"
+  author:       "Vinayak S Biradar"
+  discord:      ""
+  description:  "A 3-stage pipelined INT8 Multiply-Accumulate unit with 32-bit accumulation for edge AI acceleration."
+  language:     "Verilog"
+  clock_hz:     50000000
 
-  # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  # How many tiles your design occupies? A single tile is 1x1.
+  tiles: "1x1"
 
-  # Your top module name must start with "tt_um_". Make it unique by including your github username:
+  # Your top-level Verilog module name (must match src/project.v)
   top_module:  "tt_um_example"
 
-  # List your project's source files here.
-  # Source files must be in ./src and you must list each source file separately, one per line.
-  # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
+  # List your source files here (relative to the repo root)
   source_files:
     - "project.v"
 
-# The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
-# This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
+# Pinout mapping for the 8-bit input/output ports
 pinout:
-  # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
-  ui[3]: ""
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  # Dedicated inputs (ui_in)
+  ui[0]: "Multiplier Operand A [0]"
+  ui[1]: "Multiplier Operand A [1]"
+  ui[2]: "Multiplier Operand A [2]"
+  ui[3]: "Multiplier Operand A [3]"
+  ui[4]: "Multiplier Operand A [4]"
+  ui[5]: "Multiplier Operand A [5]"
+  ui[6]: "Multiplier Operand A [6]"
+  ui[7]: "Multiplier Operand A [7]"
 
-  # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  # Dedicated outputs (uo_out)
+  uo[0]: "Accumulator Output [0]"
+  uo[1]: "Accumulator Output [1]"
+  uo[2]: "Accumulator Output [2]"
+  uo[3]: "Accumulator Output [3]"
+  uo[4]: "Accumulator Output [4]"
+  uo[5]: "Accumulator Output [5]"
+  uo[6]: "Accumulator Output [6]"
+  uo[7]: "Accumulator Output [7]"
 
-  # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
-  uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  # Bidirectional I/O configured as inputs for Operand B (uio_in)
+  uio[0]: "Multiplier Operand B [0]"
+  uio[1]: "Multiplier Operand B [1]"
+  uio[2]: "Multiplier Operand B [2]"
+  uio[3]: "Multiplier Operand B [3]"
+  uio[4]: "Multiplier Operand B [4]"
+  uio[5]: "Multiplier Operand B [5]"
+  uio[6]: "Multiplier Operand B [6]"
+  uio[7]: "Multiplier Operand B [7]"
 
-# Do not change!
-yaml_version: 6
+# Documentation fields required for the verification booklet
+documentation:
+  author:       "Vinayak S Biradar"
+  title:        "Pipelined INT8 MAC Hardware Accelerator"
+  language:     "Verilog"
+  description:  "Pipelined signed INT8 multiply-accumulate unit with internal 32-bit accumulator."
+
+  how_it_works: >
+    Stage 1 registers the 8-bit inputs operand A (ui_in) and operand B (uio_in).
+    Stage 2 computes the signed 16-bit product. Stage 3 sign-extends the product
+    to 32 bits and accumulates it into an internal register, exposing the lower byte to uo_out.
+
+  how_to_test: >
+    Apply clk pulses with rst_n high and ena high. Feed signed 8-bit values to ui_in
+    and uio_in. The accumulated result appears at uo_out after the 3-cycle pipeline latency.
+
+  external_hw:  "None required. Direct clock and pin toggling."
+
+  doc_version:  "1.0"
