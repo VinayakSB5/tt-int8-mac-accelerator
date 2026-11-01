@@ -7,19 +7,13 @@ project:
   language:     "Verilog"
   clock_hz:     50000000
 
-  # How many tiles your design occupies? A single tile is 1x1.
   tiles: "1x1"
-
-  # Your top-level Verilog module name (must match src/project.v)
   top_module:  "tt_um_example"
 
-  # List your source files here (relative to the repo root)
   source_files:
     - "project.v"
 
-# Pinout mapping for the 8-bit input/output ports
 pinout:
-  # Dedicated inputs (ui_in)
   ui[0]: "Multiplier Operand A [0]"
   ui[1]: "Multiplier Operand A [1]"
   ui[2]: "Multiplier Operand A [2]"
@@ -29,7 +23,6 @@ pinout:
   ui[6]: "Multiplier Operand A [6]"
   ui[7]: "Multiplier Operand A [7]"
 
-  # Dedicated outputs (uo_out)
   uo[0]: "Accumulator Output [0]"
   uo[1]: "Accumulator Output [1]"
   uo[2]: "Accumulator Output [2]"
@@ -39,7 +32,6 @@ pinout:
   uo[6]: "Accumulator Output [6]"
   uo[7]: "Accumulator Output [7]"
 
-  # Bidirectional I/O configured as inputs for Operand B (uio_in)
   uio[0]: "Multiplier Operand B [0]"
   uio[1]: "Multiplier Operand B [1]"
   uio[2]: "Multiplier Operand B [2]"
@@ -49,7 +41,6 @@ pinout:
   uio[6]: "Multiplier Operand B [6]"
   uio[7]: "Multiplier Operand B [7]"
 
-# Documentation fields required for the verification booklet
 documentation:
   author:       "Vinayak S Biradar"
   title:        "Pipelined INT8 MAC Hardware Accelerator"
