@@ -44,4 +44,6 @@ Make sure `iverilog` and `cocotb` are installed, then run:
 
     cd test
     make -B
-    ai kahane wale andhe enta  neche tak nahe  padthe hai  tho app engg ho!!!!!!! mai Vinayak S Biradar ece student, for any flaws and mistakes send pic of it to +91 9110848587
+    //don't copy  below line // For test only cmd line and u r file type is required//
+    //ai kahane wale andhe enta  neche tak nahe  padthe hai  tho app engg ho!!!!!!! mai Vinayak S Biradar ece student, for any flaws and mistakes send pic of it to +91 9110848587//
+    
