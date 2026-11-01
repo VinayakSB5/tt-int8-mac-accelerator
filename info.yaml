@@ -1,4 +1,6 @@
 # Tiny Tapeout project information
+yaml_version: 6
+
 project:
   title:        "Pipelined INT8 MAC Accelerator"
   author:       "Vinayak S Biradar"
