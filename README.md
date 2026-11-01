@@ -1,42 +1,29 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# Pipelined INT8 Multiply-Accumulate (MAC) Hardware Accelerator
 
-# Tiny Tapeout Verilog Project Template
+![gds](https://github.com/VinayakSB5/tt-int8-mac-accelerator/actions/workflows/gds.yaml/badge.svg)
+![test](https://github.com/VinayakSB5/tt-int8-mac-accelerator/actions/workflows/test.yaml/badge.svg)
+![docs](https://github.com/VinayakSB5/tt-int8-mac-accelerator/actions/workflows/docs.yaml/badge.svg)
 
-- [Read the documentation for project](docs/info.md)
+**Author:** Vinayak S Biradar  
+**Target Process:** SkyWater 130nm (SKY130) Standard Cell ASIC Flow  
+**Framework:** Tiny Tapeout Shuttle  
+**Interactive 3D Layout Viewer:** [https://vinayaksb5.github.io/tt-int8-mac-accelerator/](https://vinayaksb5.github.io/tt-int8-mac-accelerator/)
 
-## What is Tiny Tapeout?
+---
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+## 1. Architectural Overview
 
-To learn more and get started, visit https://tinytapeout.com.
+This design is a synthesizable, 3-stage pipelined **INT8 Multiply-Accumulate (MAC) execution unit** targeted at low-power edge AI inference and matrix arithmetic acceleration. It is engineered for low latency, deterministic execution, and seamless integration as an execution unit alongside 32-bit RISC-V compute pipelines.
 
-## Set up your Verilog project
+### Key Hardware Specifications
+* **Data Precision:** Signed 8-bit operands with signed 16-bit intermediate multiplication.
+* **Accumulator Depth:** 32-bit signed accumulation register to prevent arithmetic overflow during deep layer iterations.
+* **Pipeline Latency:** 3 clock cycles from operand presentation to internal accumulation update.
+* **Clock Frequency:** Verified for timing closure at $50\text{ MHz}$ ($T_{clk} = 20\text{ ns}$) under nominal PVT conditions.
+* **Silicon Target:** Hardened into a standardized $1 \times 1$ Tiny Tapeout tile using OpenLane and the SkyWater 130nm PDK.
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+---
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+## 2. Microarchitecture & Pipeline Stages
 
-## Enable GitHub actions to build the results page
-
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
-
-## Resources
-
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+The hardware splits computation across three registered stages to minimize critical path delays:
